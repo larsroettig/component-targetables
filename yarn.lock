@@ -83,7 +83,7 @@
   dependencies:
     es-comments "^1.0.1"
 
-"@magento/pwa-buildpack@~10.0.0":
+"@magento/pwa-buildpack@latest":
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/@magento/pwa-buildpack/-/pwa-buildpack-10.0.0.tgz#65cef9d65f10dfd76ae0e6791c702cb4308da883"
   integrity sha512-q2S7/Opyhb3g0z7ckblWLqRGvEc1EYbMxJR2hs+HXkQQNxvIm5NmCtNyJQxPUZT830Dj8kUjZfD9zR5TE3WBcQ==
