@@ -1,0 +1,41 @@
+{
+  "name": "@larsroettig/component-targetables",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepublish": "tsc",
+    "format": "prettier --fix",
+    "lint": "eslint lib/**",
+    "lint-and-fix": "eslint  lib/** --fix"
+  },
+  "dependencies": {
+    "globby": "^12.0.1",
+    "@magento/pwa-buildpack": "~10.0.0"
+  },
+  "peerDependencies": {
+    "@magento/pwa-buildpack": "~10.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.7.1",
+    "@typescript-eslint/eslint-plugin": "^4.29.2",
+    "@typescript-eslint/parser": "^4.29.2",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.24.1",
+    "eslint-plugin-prettier": "^3.4.1",
+    "husky": "^7.0.1",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
+  },
+  "keywords": [],
+  "author": "Lars Roettig <l.roettig@techdivision.com>",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn lint"
+    }
+  }
+}
