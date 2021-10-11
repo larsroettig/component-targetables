@@ -15,7 +15,8 @@
     "format": "prettier --fix",
     "lint": "eslint src/**",
     "lint-and-fix": "eslint  src/** --fix",
-    "test": "jest"
+    "test": "jest",
+    "test:coverage": "jest --coverage && coveralls < coverage/lcov.info"
   },
   "dependencies": {
     "globby": "^11.0.0"
