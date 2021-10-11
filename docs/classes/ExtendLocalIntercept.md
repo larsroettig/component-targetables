@@ -17,6 +17,7 @@
 
 - [allowCssOverwrites](ExtendLocalIntercept.md#allowcssoverwrites)
 - [allowCustomTargetables](ExtendLocalIntercept.md#allowcustomtargetables)
+- [buildRegex](ExtendLocalIntercept.md#buildregex)
 - [getPathsByFileExtendsion](ExtendLocalIntercept.md#getpathsbyfileextendsion)
 - [getReactComponent](ExtendLocalIntercept.md#getreactcomponent)
 
@@ -34,7 +35,7 @@
 
 #### Defined in
 
-[index.ts:10](https://github.com/larsroettig/component-targetables/blob/a102960/lib/index.ts#L10)
+index.ts:13
 
 ## Properties
 
@@ -44,7 +45,7 @@
 
 #### Defined in
 
-[index.ts:8](https://github.com/larsroettig/component-targetables/blob/a102960/lib/index.ts#L8)
+index.ts:11
 
 ___
 
@@ -54,18 +55,19 @@ ___
 
 #### Defined in
 
-[index.ts:6](https://github.com/larsroettig/component-targetables/blob/a102960/lib/index.ts#L6)
+index.ts:9
 
 ## Methods
 
 ### allowCssOverwrites
 
-▸ **allowCssOverwrites**(`fileExtendsion?`, `magentoPath?`): `void`
+▸ **allowCssOverwrites**(`targetablesSearchPaths?`, `fileExtendsion?`, `magentoPath?`): `void`
 
 #### Parameters
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
+| `targetablesSearchPaths` | `string`[] | `undefined` |
 | `fileExtendsion` | `string` | `'*.css'` |
 | `magentoPath` | `string` | `'node_modules/@magento'` |
 
@@ -75,18 +77,19 @@ ___
 
 #### Defined in
 
-[index.ts:58](https://github.com/larsroettig/component-targetables/blob/a102960/lib/index.ts#L58)
+index.ts:69
 
 ___
 
 ### allowCustomTargetables
 
-▸ **allowCustomTargetables**(`fileExtendsion?`, `magentoPath?`): `void`
+▸ **allowCustomTargetables**(`targetablesSearchPaths?`, `fileExtendsion?`, `magentoPath?`): `void`
 
 #### Parameters
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
+| `targetablesSearchPaths` | `string`[] | `undefined` |
 | `fileExtendsion` | `string` | `'*.targetables.js'` |
 | `magentoPath` | `string` | `'node_modules/@magento'` |
 
@@ -96,19 +99,40 @@ ___
 
 #### Defined in
 
-[index.ts:18](https://github.com/larsroettig/component-targetables/blob/a102960/lib/index.ts#L18)
+index.ts:22
+
+___
+
+### buildRegex
+
+▸ `Private` **buildRegex**(`targetablesSearchPaths`): `RegExp`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `targetablesSearchPaths` | `string`[] |
+
+#### Returns
+
+`RegExp`
+
+#### Defined in
+
+index.ts:119
 
 ___
 
 ### getPathsByFileExtendsion
 
-▸ `Private` **getPathsByFileExtendsion**(`fileExtendsion`): `string`[]
+▸ `Private` **getPathsByFileExtendsion**(`fileExtendsion`, `targetablesSearchPaths?`): `string`[]
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `fileExtendsion` | `string` |
+| `targetablesSearchPaths` | `string`[] |
 
 #### Returns
 
@@ -116,7 +140,7 @@ ___
 
 #### Defined in
 
-[index.ts:115](https://github.com/larsroettig/component-targetables/blob/a102960/lib/index.ts#L115)
+index.ts:146
 
 ___
 
@@ -136,4 +160,4 @@ ___
 
 #### Defined in
 
-[index.ts:104](https://github.com/larsroettig/component-targetables/blob/a102960/lib/index.ts#L104)
+index.ts:135

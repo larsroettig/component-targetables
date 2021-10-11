@@ -24,15 +24,15 @@ module.exports = localIntercept;
 https://dev.to/chrisbrabender/simplifying-targetables-in-pwa-studio-p8b
 
 ## Api Documentation
-
 ### allowCssOverwrites
 
-▸ **allowCssOverwrites**(`fileExtendsion?`, `magentoPath?`): `void`
+▸ **allowCssOverwrites**(`targetablesSearchPaths?`, `fileExtendsion?`, `magentoPath?`): `void`
 
 #### Parameters
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
+| `targetablesSearchPaths` | `string`[] |
 | `fileExtendsion` | `string` | `'*.css'` |
 | `magentoPath` | `string` | `'node_modules/@magento'` |
 
@@ -42,18 +42,19 @@ https://dev.to/chrisbrabender/simplifying-targetables-in-pwa-studio-p8b
 
 #### Defined in
 
-[index.ts:58](https://github.com/larsroettig/component-targetables/blob/a102960/lib/index.ts#L58)
+index.ts:69
 
 ___
 
 ### allowCustomTargetables
 
-▸ **allowCustomTargetables**(`fileExtendsion?`, `magentoPath?`): `void`
+▸ **allowCustomTargetables**(`targetablesSearchPaths?`, `fileExtendsion?`, `magentoPath?`): `void`
 
 #### Parameters
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
+| `targetablesSearchPaths` | `string`[] |
 | `fileExtendsion` | `string` | `'*.targetables.js'` |
 | `magentoPath` | `string` | `'node_modules/@magento'` |
 
@@ -63,4 +64,4 @@ ___
 
 #### Defined in
 
-[index.ts:18](https://github.com/larsroettig/component-targetables/blob/a102960/lib/index.ts#L18)
+index.ts:22
