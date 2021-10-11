@@ -72,6 +72,7 @@ class ExtendLocalIntercept {
     magentoPath = 'node_modules/@magento',
   ) => {
     (async () => {
+      const currentPath = process.cwd();
       const paths = await this.getPathsByFileExtendsion(
         fileExtendsion,
         targetablesSearchPaths,
@@ -84,7 +85,7 @@ class ExtendLocalIntercept {
           replaceRegex,
           `${magentoPath}/venia-ui/lib/$<type>`,
         );
-        const absolutePath = path.resolve(relativePath);
+        const absolutePath = path.resolve(currentPath, relativePath);
 
         fs.stat(
           absolutePath,

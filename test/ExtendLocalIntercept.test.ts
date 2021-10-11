@@ -44,11 +44,16 @@ test('Can create Intance without an Error', () => {
   expect(extendLocalIntercept).toBeInstanceOf(ExtendLocalIntercept);
 });
 
-test('allowCustomTargetables', async () => {
+test('allowCustomTargetables', () => {
   const { restoreCwd } = useFixture('targetables');
 
+  const reactComponentMock = {
+    addImport: jest.fn(),
+    insertAfterSource: jest.fn(),
+  };
+
   const targetablesMock = {
-    reactComponent: jest.fn(),
+    reactComponent: () => reactComponentMock,
   };
 
   const extendLocalIntercept = new ExtendLocalIntercept(
