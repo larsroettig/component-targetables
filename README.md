@@ -42,7 +42,7 @@ https://dev.to/chrisbrabender/simplifying-targetables-in-pwa-studio-p8b
 
 #### Defined in
 
-index.ts:69
+src/index.ts:69
 
 ___
 
@@ -64,4 +64,4 @@ ___
 
 #### Defined in
 
-index.ts:22
+src/index.ts:22
