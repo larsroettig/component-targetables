@@ -32,7 +32,7 @@ https://dev.to/chrisbrabender/simplifying-targetables-in-pwa-studio-p8b
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
-| `targetablesSearchPaths` | `string`[] |
+| `targetablesSearchPaths` | `string[]`| `['src/components', 'src/RootComponents']` |
 | `fileExtendsion` | `string` | `'*.css'` |
 | `magentoPath` | `string` | `'node_modules/@magento'` |
 
@@ -40,28 +40,22 @@ https://dev.to/chrisbrabender/simplifying-targetables-in-pwa-studio-p8b
 
 `void`
 
-#### Defined in
-
-src/index.ts:69
-
 ___
 
 ### allowCustomTargetables
 
 ▸ **allowCustomTargetables**(`targetablesSearchPaths?`, `fileExtendsion?`, `magentoPath?`): `void`
 
+Allows to place a custome targetable with given matching filepattern.
+
 #### Parameters
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
-| `targetablesSearchPaths` | `string`[] |
+| `targetablesSearchPaths` | `string[]`| `['src/components', 'src/RootComponents']` |
 | `fileExtendsion` | `string` | `'*.targetables.js'` |
 | `magentoPath` | `string` | `'node_modules/@magento'` |
 
 #### Returns
 
 `void`
-
-#### Defined in
-
-src/index.ts:22
