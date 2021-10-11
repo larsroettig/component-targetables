@@ -16,7 +16,7 @@
     "lint": "eslint src/**",
     "lint-and-fix": "eslint  src/** --fix",
     "test": "jest",
-    "test:coverage": "jest --coverage && coveralls < coverage/lcov.info"
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
     "globby": "^11.0.0"
