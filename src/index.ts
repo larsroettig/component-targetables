@@ -1,6 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-const globby = require('globby');
+/* eslint-disable import/extensions, import/no-unresolved */
+import fs from 'fs';
+import path from 'path';
+import globby from 'globby';
+
+const { requireTargetFile } = require('./requireTargetFile');
 
 class ExtendLocalIntercept {
   private targetables: any;
@@ -12,10 +15,12 @@ class ExtendLocalIntercept {
   }
 
   /**
+   * @param string[] targetablesSearchPaths - array of paths to search for targetables
    * @param string fileExtendsion
    * @param string magentoPath
    */
   public allowCustomTargetables = (
+    targetablesSearchPaths = ['src/components', 'src/RootComponents'],
     fileExtendsion = '*.targetables.js',
     magentoPath = 'node_modules/@magento',
   ) => {
@@ -23,16 +28,19 @@ class ExtendLocalIntercept {
       const currentPath = process.cwd();
       const paths = await this.getPathsByFileExtendsion(
         fileExtendsion,
+        targetablesSearchPaths,
       );
+
+      const replaceRegex = this.buildRegex(targetablesSearchPaths);
 
       paths.forEach((myPath: string) => {
         const relativePath = myPath
           .replace('.targetables', '')
           .replace(
-            /src\/(?<type>components|RootComponents)/,
+            replaceRegex,
             `${magentoPath}/venia-ui/lib/$<type>`,
           );
-        const absolutePath = path.resolve(relativePath);
+        const absolutePath = path.resolve(currentPath, relativePath);
 
         fs.stat(
           absolutePath,
@@ -41,8 +49,10 @@ class ExtendLocalIntercept {
               const component = this.getReactComponent(
                 relativePath.replace('node_modules/', ''),
               );
-              // eslint-disable-next-line global-require,import/no-dynamic-require
-              const componentInterceptor = require(`${currentPath}/${myPath}`);
+
+              const componentInterceptor = requireTargetFile(
+                `${currentPath}/${myPath}`,
+              );
               componentInterceptor.interceptComponent(component);
             }
           },
@@ -52,21 +62,26 @@ class ExtendLocalIntercept {
   };
 
   /**
+   * @param string[] targetablesSearchPaths - array of paths to search for targetables
    * @param string fileExtendsion
    * @param string magentoPath
    */
   public allowCssOverwrites = (
+    targetablesSearchPaths = ['src/components', 'src/RootComponents'],
     fileExtendsion = '*.css',
     magentoPath = 'node_modules/@magento',
   ) => {
     (async () => {
       const paths = await this.getPathsByFileExtendsion(
         fileExtendsion,
+        targetablesSearchPaths,
       );
+
+      const replaceRegex = this.buildRegex(targetablesSearchPaths);
 
       paths.forEach((myPath: string) => {
         const relativePath = myPath.replace(
-          /src\/(?<type>components|RootComponents)/,
+          replaceRegex,
           `${magentoPath}/venia-ui/lib/$<type>`,
         );
         const absolutePath = path.resolve(relativePath);
@@ -101,6 +116,22 @@ class ExtendLocalIntercept {
     })();
   };
 
+  private buildRegex = (targetablesSearchPaths: string[]): RegExp => {
+    const componentPaths: string[] = [];
+    const rootPaths: string[] = [];
+
+    targetablesSearchPaths.forEach((tmpPath: string) => {
+      const [rootPath, componentPath] = tmpPath.split('/', 2);
+      componentPaths.push(componentPath);
+      rootPaths.push(rootPath);
+    });
+
+    return new RegExp(
+      `(${rootPaths.join('|')})/(?<type>${componentPaths.join('|')})`,
+      '',
+    );
+  };
+
   private getReactComponent = (modulePath: string) => {
     if (this.componentsCache[modulePath] !== undefined) {
       return this.componentsCache[modulePath];
@@ -112,21 +143,24 @@ class ExtendLocalIntercept {
     return this.componentsCache[modulePath];
   };
 
-  private getPathsByFileExtendsion(fileExtendsion: string) {
-    const targetablesSearchPaths = [
-      'src/components',
-      'src/RootComponents',
-    ];
-
+  private getPathsByFileExtendsion(
+    fileExtendsion: string,
+    targetablesSearchPaths: string[] = [
+      'components',
+      'RootComponents',
+    ],
+  ) {
     const paths: string[] = [];
-    targetablesSearchPaths.forEach(async (targetablesSearchPath) => {
-      const tmp = await globby(targetablesSearchPath, {
-        expandDirectories: {
-          files: [fileExtendsion],
-        },
-      });
-      paths.push(...tmp);
+
+    const tmp = globby.sync(targetablesSearchPaths, {
+      expandDirectories: {
+        files: [fileExtendsion],
+      },
     });
+
+    if (tmp.length > 0) {
+      paths.push(...tmp);
+    }
 
     return paths;
   }
