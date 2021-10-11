@@ -59,3 +59,7 @@ Allows to place a custome targetable with given matching filepattern.
 #### Returns
 
 `void`
+
+
+### Demo
+https://github.com/larsroettig/demo-component-targetables
