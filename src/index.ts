@@ -1,4 +1,5 @@
 /* eslint-disable import/extensions, import/no-unresolved */
+/* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 import fs from 'fs';
 import path from 'path';
 import globby from 'globby';
@@ -16,26 +17,31 @@ class ExtendLocalIntercept {
 
   /**
    * @param string[] targetablesSearchPaths - array of paths to search for targetables
-   * @param string fileExtendsion
+   * @param string fileExtension
    * @param string magentoPath
    */
   public allowCustomTargetables = (
     targetablesSearchPaths = ['src/components', 'src/RootComponents'],
-    fileExtendsion = '*.targetables.js',
+    fileExtension = '*.targetables.js',
     magentoPath = 'node_modules/@magento',
   ) => {
     (async () => {
       const currentPath = process.cwd();
-      const paths = await this.getPathsByFileExtendsion(
-        fileExtendsion,
+      const paths = await this.getPathsByFileExtension(
+        fileExtension,
         targetablesSearchPaths,
       );
 
       const replaceRegex = this.buildRegex(targetablesSearchPaths);
 
+      const pathReplacement = fileExtension.substring(
+        1,
+        fileExtension.length - 3,
+      );
+
       paths.forEach((myPath: string) => {
         const relativePath = myPath
-          .replace('.targetables', '')
+          .replace(pathReplacement, '')
           .replace(
             replaceRegex,
             `${magentoPath}/venia-ui/lib/$<type>`,
@@ -54,6 +60,8 @@ class ExtendLocalIntercept {
                 `${currentPath}/${myPath}`,
               );
               componentInterceptor.interceptComponent(component);
+            } else {
+              console.warn('Error in allowCustomTargetables', err);
             }
           },
         );
@@ -63,18 +71,18 @@ class ExtendLocalIntercept {
 
   /**
    * @param string[] targetablesSearchPaths - array of paths to search for targetables
-   * @param string fileExtendsion
+   * @param string fileExtension
    * @param string magentoPath
    */
   public allowCssOverwrites = (
     targetablesSearchPaths = ['src/components', 'src/RootComponents'],
-    fileExtendsion = '*.css',
+    fileExtension = '*.css',
     magentoPath = 'node_modules/@magento',
   ) => {
     (async () => {
       const currentPath = process.cwd();
-      const paths = await this.getPathsByFileExtendsion(
-        fileExtendsion,
+      const paths = await this.getPathsByFileExtension(
+        fileExtension,
         targetablesSearchPaths,
       );
 
@@ -110,6 +118,8 @@ class ExtendLocalIntercept {
                 'const classes = useStyle(defaultClasses, ',
                 'localClasses, ',
               );
+            } else {
+              console.warn('Error in allowCssOverwrites', err);
             }
           },
         );
@@ -144,8 +154,8 @@ class ExtendLocalIntercept {
     return this.componentsCache[modulePath];
   };
 
-  private getPathsByFileExtendsion(
-    fileExtendsion: string,
+  private getPathsByFileExtension(
+    fileExtension: string,
     targetablesSearchPaths: string[] = [
       'components',
       'RootComponents',
@@ -155,12 +165,18 @@ class ExtendLocalIntercept {
 
     const tmp = globby.sync(targetablesSearchPaths, {
       expandDirectories: {
-        files: [fileExtendsion],
+        files: [fileExtension],
       },
     });
 
     if (tmp.length > 0) {
       paths.push(...tmp);
+    } else {
+      console.warn(
+        'No targetables found in',
+        targetablesSearchPaths,
+        fileExtension,
+      );
     }
 
     return paths;
