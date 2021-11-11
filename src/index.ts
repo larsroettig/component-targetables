@@ -16,11 +16,13 @@ class ExtendLocalIntercept {
 
   /**
    * @param string[] targetablesSearchPaths - array of paths to search for targetables
+   * @param string customMainDir allows to define custom main dir
    * @param string fileExtendsion
    * @param string magentoPath
    */
   public allowCustomTargetables = (
     targetablesSearchPaths = ['src/components', 'src/RootComponents'],
+    customMainDir = 'src',
     fileExtendsion = '*.targetables.js',
     magentoPath = 'node_modules/@magento',
   ) => {
@@ -34,6 +36,11 @@ class ExtendLocalIntercept {
       const replaceRegex = this.buildRegex(targetablesSearchPaths);
 
       paths.forEach((myPath: string) => {
+        if (customMainDir !== 'src') {
+          customMainDir = customMainDir.replace(/(\s+)/g, '\\$1');
+          myPath = myPath.replace(customMainDir, 'src');
+        }
+
         const relativePath = myPath
           .replace('.targetables', '')
           .replace(
@@ -63,11 +70,13 @@ class ExtendLocalIntercept {
 
   /**
    * @param string[] targetablesSearchPaths - array of paths to search for targetables
+   * @param string customMainDir allows to define custom main dir
    * @param string fileExtendsion
    * @param string magentoPath
    */
   public allowCssOverwrites = (
     targetablesSearchPaths = ['src/components', 'src/RootComponents'],
+    customMainDir = 'src',
     fileExtendsion = '*.css',
     magentoPath = 'node_modules/@magento',
   ) => {
@@ -81,6 +90,11 @@ class ExtendLocalIntercept {
       const replaceRegex = this.buildRegex(targetablesSearchPaths);
 
       paths.forEach((myPath: string) => {
+        if (customMainDir !== 'src') {
+          customMainDir = customMainDir.replace(/(\s+)/g, '\\$1');
+          myPath = myPath.replace(customMainDir, 'src');
+        }
+
         const relativePath = myPath.replace(
           replaceRegex,
           `${magentoPath}/venia-ui/lib/$<type>`,

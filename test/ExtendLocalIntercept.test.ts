@@ -60,7 +60,11 @@ test('allowCustomTargetables', () => {
     targetablesMock,
   );
 
-  extendLocalIntercept.allowCustomTargetables(['src/components']);
+  const customMainDir = 'src/core-extension';
+  extendLocalIntercept.allowCustomTargetables(
+    ['src/core-extension/components'],
+    customMainDir,
+  );
   extendLocalIntercept.allowCssOverwrites();
 
   expect(extendLocalIntercept).toBeInstanceOf(ExtendLocalIntercept);

@@ -28,11 +28,14 @@ https://dev.to/chrisbrabender/simplifying-targetables-in-pwa-studio-p8b
 
 ▸ **allowCssOverwrites**(`targetablesSearchPaths?`, `fileExtendsion?`, `magentoPath?`): `void`
 
+
+
 #### Parameters
 
-| Name | Type | Default value |
-| :------ | :------ | :------ |
-| `targetablesSearchPaths` | `string[]`| `['src/components', 'src/RootComponents']` |
+| Name | Type | Default value | Description |
+| :------ | :------ | :------ | :------ |
+| `targetablesSearchPaths` | `string[]`| `['src/components', 'src/RootComponents']` | |
+| `targetablesSearchPaths` | `string`| `'customMainDir'` | Alows to place components in subdir  |
 | `fileExtendsion` | `string` | `'*.css'` |
 | `magentoPath` | `string` | `'node_modules/@magento'` |
 
