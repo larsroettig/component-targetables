@@ -1,5 +1,12 @@
 src
+test
+coverage
 docs
 tsconfig.json
 tslint.json
 .prettierrc
+.vscode
+.github
+.eslintrc.js
+jest.config.js
+prettier.config.js
