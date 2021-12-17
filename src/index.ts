@@ -7,7 +7,7 @@ import globby from 'globby';
 const { requireTargetFile } = require('./requireTargetFile');
 
 enum LogLevel {
-  'error' = 0,
+  'warn' = 0,
   'info' = 1,
   'debug' = 2,
   'silent' = 3,
@@ -24,7 +24,7 @@ class ExtendLocalIntercept {
 
   constructor(
     targetables: any,
-    options: ExtendInterceptOptions = { logLevel: LogLevel.error },
+    options: ExtendInterceptOptions = { logLevel: LogLevel.warn },
   ) {
     this.targetables = targetables;
     this.logLevel = options.logLevel;
@@ -87,7 +87,7 @@ class ExtendLocalIntercept {
    * @return
    */
   public allowCssOverwrites = async (
-    fileExtension = '*.css',
+    fileExtension = '*.module.css',
     targetablesSearchPaths = ['src/components', 'src/RootComponents'],
     magentoPath = 'node_modules/@magento',
   ) => {
@@ -176,7 +176,7 @@ class ExtendLocalIntercept {
       paths.push(...tmp);
     } else {
       this.log(
-        LogLevel.error,
+        LogLevel.warn,
         'No targetables found in',
         targetablesSearchPaths,
         fileExtension,
@@ -189,8 +189,8 @@ class ExtendLocalIntercept {
   private log(level: LogLevel, message: string, ...args: any[]) {
     if (this.logLevel >= level) {
       switch (level) {
-        case LogLevel.error:
-          console.error(message, args);
+        case LogLevel.warn:
+          console.warn(message, args);
           break;
         case LogLevel.info:
           console.log(message, args);

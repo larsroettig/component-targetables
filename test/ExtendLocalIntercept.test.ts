@@ -1,5 +1,5 @@
 /* eslint-disable  */
-import { ExtendLocalIntercept } from '../src/index';
+import { ExtendLocalIntercept, LogLevel } from '../src/index';
 const { requireTargetFile } = require('../src/requireTargetFile');
 
 const FIXTURES_DIR = `${__dirname}/fixtures`;
@@ -67,7 +67,7 @@ test('allowCustomTargetables', () => {
   extendLocalIntercept.allowCustomTargetables('*.targetables.js', [
     'src/components',
   ]);
-  extendLocalIntercept.allowCssOverwrites();
+  extendLocalIntercept.allowCssOverwrites('*.css');
 
   expect(extendLocalIntercept).toBeInstanceOf(ExtendLocalIntercept);
   restoreCwd();
@@ -87,7 +87,7 @@ test('allowCustomTargetablesInDifferentDir', async () => {
 
   const extendLocalIntercept = new ExtendLocalIntercept(
     targetablesMock,
-    { logLevel: 'debug' },
+    { logLevel: LogLevel.debug },
   );
 
   await extendLocalIntercept.allowCustomTargetables(
