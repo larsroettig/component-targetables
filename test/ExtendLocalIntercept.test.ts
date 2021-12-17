@@ -2,17 +2,21 @@
 import { ExtendLocalIntercept } from '../src/index';
 const { requireTargetFile } = require('../src/requireTargetFile');
 
+const FIXTURES_DIR = `${__dirname}/fixtures`;
+const requireTargetFileCalls = new Map();
 jest.mock('../src/requireTargetFile', () => {
-  const requireTargetFile = (): any => {
+  const requireTargetFile = (path: string) => {
+    if (!requireTargetFileCalls.has(path)) {
+      requireTargetFileCalls.set(path, jest.fn());
+    }
+
     return {
-      interceptComponent: jest.fn(),
+      interceptComponent: requireTargetFileCalls.get(path),
     };
   };
 
   return { requireTargetFile };
 });
-
-const FIXTURES_DIR = `${__dirname}/fixtures`;
 
 // Temporary switch cwd
 const changeCwd = (cwd: string) => {
@@ -32,7 +36,7 @@ beforeEach(() => {
   jest.resetModules();
 });
 
-test('Can create Intance without an Error', () => {
+test('Can create Instance without an Error', () => {
   const targetablesMock = {
     reactComponent: jest.fn(),
   };
@@ -60,8 +64,40 @@ test('allowCustomTargetables', () => {
     targetablesMock,
   );
 
-  extendLocalIntercept.allowCustomTargetables(['src/components']);
+  extendLocalIntercept.allowCustomTargetables('*.targetables.js', [
+    'src/components',
+  ]);
   extendLocalIntercept.allowCssOverwrites();
+
+  expect(extendLocalIntercept).toBeInstanceOf(ExtendLocalIntercept);
+  restoreCwd();
+});
+
+test('allowCustomTargetablesInDifferentDir', async () => {
+  const { restoreCwd } = useFixture('targetables');
+
+  const reactComponentMock = {
+    addImport: jest.fn(),
+    insertAfterSource: jest.fn(),
+  };
+
+  const targetablesMock = {
+    reactComponent: () => reactComponentMock,
+  };
+
+  const extendLocalIntercept = new ExtendLocalIntercept(
+    targetablesMock,
+    { logLevel: 'debug' },
+  );
+
+  await extendLocalIntercept.allowCustomTargetables(
+    '*.targetables.js',
+    ['extend-core/components'],
+  );
+
+  await extendLocalIntercept.allowCssOverwrites('*.module.css', [
+    'extend-core/components',
+  ]);
 
   expect(extendLocalIntercept).toBeInstanceOf(ExtendLocalIntercept);
   restoreCwd();

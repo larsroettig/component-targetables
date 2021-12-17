@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["globby", "magento"]
+  "cSpell.words": ["globby", "magento", "pino"],
+  "cSpell.enableFiletypes": [
+    "ruby",
+    "sqlite",
+    "styled-css",
+    "wallaby-inspector",
+    "wallaby-tests"
+  ]
 }

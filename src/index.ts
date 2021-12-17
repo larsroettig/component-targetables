@@ -1,18 +1,37 @@
 /* eslint-disable import/extensions, import/no-unresolved */
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-import fs from 'fs';
+import { promises as fs } from 'fs';
+
 import path from 'path';
 import globby from 'globby';
+import pino, { Logger } from 'pino';
 
 const { requireTargetFile } = require('./requireTargetFile');
+
+type ExtendInterceptOptions = {
+  logLevel:
+    | 'silent'
+    | 'fatal'
+    | 'error'
+    | 'warn'
+    | 'info'
+    | 'debug'
+    | 'trace';
+};
 
 class ExtendLocalIntercept {
   private targetables: any;
 
   private componentsCache: Record<string, any> = {};
 
-  constructor(targetables: any) {
+  private logger: Logger;
+
+  constructor(
+    targetables: any,
+    options: ExtendInterceptOptions = { logLevel: 'silent' },
+  ) {
     this.targetables = targetables;
+    this.logger = pino({ level: options.logLevel });
   }
 
   /**
@@ -20,111 +39,95 @@ class ExtendLocalIntercept {
    * @param string fileExtension
    * @param string magentoPath
    */
-  public allowCustomTargetables = (
-    targetablesSearchPaths = ['src/components', 'src/RootComponents'],
+  public allowCustomTargetables = async (
     fileExtension = '*.targetables.js',
+    targetablesSearchPaths = ['src/components', 'src/RootComponents'],
     magentoPath = 'node_modules/@magento',
   ) => {
-    (async () => {
-      const currentPath = process.cwd();
-      const paths = await this.getPathsByFileExtension(
-        fileExtension,
-        targetablesSearchPaths,
-      );
+    const currentPath = process.cwd();
+    const paths = await this.getPathsByFileExtension(
+      fileExtension,
+      targetablesSearchPaths,
+    );
 
-      const replaceRegex = this.buildRegex(targetablesSearchPaths);
+    const replaceRegex = this.buildRegex(targetablesSearchPaths);
 
-      const pathReplacement = fileExtension.substring(
-        1,
-        fileExtension.length - 3,
-      );
+    const pathReplacement = fileExtension.substring(
+      1,
+      fileExtension.length - 3,
+    );
 
-      paths.forEach((myPath: string) => {
-        const relativePath = myPath
-          .replace(pathReplacement, '')
-          .replace(
-            replaceRegex,
-            `${magentoPath}/venia-ui/lib/$<type>`,
-          );
-        const absolutePath = path.resolve(currentPath, relativePath);
+    paths.forEach(async (myPath: string) => {
+      const relativePath = myPath
+        .replace(pathReplacement, '')
+        .replace(replaceRegex, `${magentoPath}/venia-ui/lib/$<type>`);
+      const absolutePath = path.resolve(currentPath, relativePath);
 
-        fs.stat(
-          absolutePath,
-          (err: any, stat: { isFile: () => any }) => {
-            if (!err && stat && stat.isFile()) {
-              const component = this.getReactComponent(
-                relativePath.replace('node_modules/', ''),
-              );
-
-              const componentInterceptor = requireTargetFile(
-                `${currentPath}/${myPath}`,
-              );
-              componentInterceptor.interceptComponent(component);
-            } else {
-              console.warn('Error in allowCustomTargetables', err);
-            }
-          },
+      const stat = await fs.stat(absolutePath);
+      if (stat && stat.isFile()) {
+        const component = this.getReactComponent(
+          relativePath.replace('node_modules/', ''),
         );
-      });
-    })();
+
+        this.logger.debug('Intercept', `${currentPath}/${myPath}`);
+
+        const componentInterceptor = requireTargetFile(
+          `${currentPath}/${myPath}`,
+        );
+
+        componentInterceptor.interceptComponent(component);
+      }
+    });
   };
 
   /**
    * @param string[] targetablesSearchPaths - array of paths to search for targetables
    * @param string fileExtension
    * @param string magentoPath
+   * @return
    */
-  public allowCssOverwrites = (
-    targetablesSearchPaths = ['src/components', 'src/RootComponents'],
+  public allowCssOverwrites = async (
     fileExtension = '*.css',
+    targetablesSearchPaths = ['src/components', 'src/RootComponents'],
     magentoPath = 'node_modules/@magento',
   ) => {
-    (async () => {
-      const currentPath = process.cwd();
-      const paths = await this.getPathsByFileExtension(
-        fileExtension,
-        targetablesSearchPaths,
+    const currentPath = process.cwd();
+    const paths = await this.getPathsByFileExtension(
+      fileExtension,
+      targetablesSearchPaths,
+    );
+
+    const replaceRegex = this.buildRegex(targetablesSearchPaths);
+
+    paths.forEach(async (myPath: string) => {
+      const relativePath = myPath.replace(
+        replaceRegex,
+        `${magentoPath}/venia-ui/lib/$<type>`,
       );
+      const absolutePath = path.resolve(currentPath, relativePath);
 
-      const replaceRegex = this.buildRegex(targetablesSearchPaths);
+      const stat = await fs.stat(absolutePath);
 
-      paths.forEach((myPath: string) => {
-        const relativePath = myPath.replace(
-          replaceRegex,
-          `${magentoPath}/venia-ui/lib/$<type>`,
+      if (stat && stat.isFile()) {
+        /**
+         * This means we have matched a local file to something in venia-ui!
+         * Find the JS  component from our CSS file name
+         * */
+        const jsComponent = relativePath
+          .replace('node_modules/', '')
+          .replace(fileExtension.substring(1), '.js');
+
+        const eSModule = this.getReactComponent(jsComponent);
+        /** Add import for our custom CSS classes */
+        eSModule.addImport(`import localClasses from "${myPath}"`);
+
+        /** Update the mergeClasses() method to inject our additional custom css */
+        eSModule.insertAfterSource(
+          'const classes = useStyle(defaultClasses, ',
+          'localClasses, ',
         );
-        const absolutePath = path.resolve(currentPath, relativePath);
-
-        fs.stat(
-          absolutePath,
-          (err: any, stat: { isFile: () => any }) => {
-            if (!err && stat && stat.isFile()) {
-              /**
-               * This means we have matched a local file to something in venia-ui!
-               * Find the JS  component from our CSS file name
-               * */
-              const jsComponent = relativePath
-                .replace('node_modules/', '')
-                .replace('.css', '.js');
-
-              const eSModule = this.getReactComponent(jsComponent);
-              /** Add import for our custom CSS classes */
-              eSModule.addImport(
-                `import localClasses from "${myPath}"`,
-              );
-
-              /** Update the mergeClasses() method to inject our additional custom css */
-              eSModule.insertAfterSource(
-                'const classes = useStyle(defaultClasses, ',
-                'localClasses, ',
-              );
-            } else {
-              console.warn('Error in allowCssOverwrites', err);
-            }
-          },
-        );
-      });
-    })();
+      }
+    });
   };
 
   private buildRegex = (targetablesSearchPaths: string[]): RegExp => {
@@ -172,7 +175,7 @@ class ExtendLocalIntercept {
     if (tmp.length > 0) {
       paths.push(...tmp);
     } else {
-      console.warn(
+      this.logger.warn(
         'No targetables found in',
         targetablesSearchPaths,
         fileExtension,
