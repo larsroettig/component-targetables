@@ -1,37 +1,33 @@
 /* eslint-disable import/extensions, import/no-unresolved */
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
 import { promises as fs } from 'fs';
-
 import path from 'path';
 import globby from 'globby';
-import pino, { Logger } from 'pino';
 
 const { requireTargetFile } = require('./requireTargetFile');
 
+enum LogLevel {
+  'error' = 0,
+  'info' = 1,
+  'debug' = 2,
+  'silent' = 3,
+}
+
 type ExtendInterceptOptions = {
-  logLevel:
-    | 'silent'
-    | 'fatal'
-    | 'error'
-    | 'warn'
-    | 'info'
-    | 'debug'
-    | 'trace';
+  logLevel: LogLevel;
 };
 
 class ExtendLocalIntercept {
   private targetables: any;
-
   private componentsCache: Record<string, any> = {};
-
-  private logger: Logger;
+  private logLevel: LogLevel;
 
   constructor(
     targetables: any,
-    options: ExtendInterceptOptions = { logLevel: 'silent' },
+    options: ExtendInterceptOptions = { logLevel: LogLevel.error },
   ) {
     this.targetables = targetables;
-    this.logger = pino({ level: options.logLevel });
+    this.logLevel = options.logLevel;
   }
 
   /**
@@ -69,7 +65,11 @@ class ExtendLocalIntercept {
           relativePath.replace('node_modules/', ''),
         );
 
-        this.logger.debug('Intercept', `${currentPath}/${myPath}`);
+        this.log(
+          LogLevel.debug,
+          'Intercept',
+          `${currentPath}/${myPath}`,
+        );
 
         const componentInterceptor = requireTargetFile(
           `${currentPath}/${myPath}`,
@@ -175,7 +175,8 @@ class ExtendLocalIntercept {
     if (tmp.length > 0) {
       paths.push(...tmp);
     } else {
-      this.logger.warn(
+      this.log(
+        LogLevel.error,
         'No targetables found in',
         targetablesSearchPaths,
         fileExtension,
@@ -184,7 +185,20 @@ class ExtendLocalIntercept {
 
     return paths;
   }
+
+  private log(level: LogLevel, message: string, ...args: any[]) {
+    if (this.logLevel >= level) {
+      switch (level) {
+        case LogLevel.error:
+          console.error(message, args);
+          break;
+        case LogLevel.info:
+          console.log(message, args);
+          break;
+      }
+    }
+  }
 }
 // eslint-disable-next-line import/prefer-default-export
-export { ExtendLocalIntercept };
+export { LogLevel, ExtendLocalIntercept };
 module.exports.ExtendLocalIntercept = ExtendLocalIntercept;
