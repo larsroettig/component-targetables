@@ -1,8 +1,9 @@
 /* eslint-disable  */
-import { ExtendLocalIntercept, LogLevel } from '../src/index';
+import { ExtendLocalIntercept, LogLevel } from '../src';
 const { requireTargetFile } = require('../src/requireTargetFile');
 
 const FIXTURES_DIR = `${__dirname}/fixtures`;
+
 const requireTargetFileCalls = new Map();
 jest.mock('../src/requireTargetFile', () => {
   const requireTargetFile = (path: string) => {
@@ -100,5 +101,6 @@ test('allowCustomTargetablesInDifferentDir', async () => {
   ]);
 
   expect(extendLocalIntercept).toBeInstanceOf(ExtendLocalIntercept);
+  expect(requireTargetFileCalls.size).toBe(2);
   restoreCwd();
 });
