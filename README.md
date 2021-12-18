@@ -1,6 +1,13 @@
 # PWAStudio `.targetables.js` Plugins
 
+[![Coverage Status](https://coveralls.io/repos/github/larsroettig/component-targetables/badge.svg?branch=main)](https://coveralls.io/github/larsroettig/component-targetables?branch=main)
+
+
+
 Allows to use `.targetables.js` for PWAStudio
+
+
+
 
 
 ### Usage Exsample
@@ -32,7 +39,6 @@ https://dev.to/chrisbrabender/simplifying-targetables-in-pwa-studio-p8b
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
-
 | `fileExtendsion` | `string` | `'*.module.css'` |
 | `targetablesSearchPaths` | `string[]`| `['src/components', 'src/RootComponents']` |
 | `magentoPath` | `string` | `'node_modules/@magento'` |
@@ -53,7 +59,6 @@ Allows to place a custome targetable with given matching filepattern.
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
-
 | `fileExtendsion` | `string` | `'*.targetables.js'` |
 | `targetablesSearchPaths` | `string[]`| `['src/components', 'src/RootComponents']` |
 | `magentoPath` | `string` | `'node_modules/@magento'` |
