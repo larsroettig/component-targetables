@@ -2,15 +2,9 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/larsroettig/component-targetables/badge.svg?branch=main)](https://coveralls.io/github/larsroettig/component-targetables?branch=main)
 
-
-
 Allows to use `.targetables.js` for PWAStudio
 
-
-
-
-
-### Usage Exsample
+## Usage Exsample
 
 ```javascript
 const { ExtendLocalIntercept } = require('@larsroettig/component-targetables');
@@ -66,7 +60,6 @@ Allows to place a custome targetable with given matching filepattern.
 #### Returns
 
 `void`
-
 
 ### Demo
 https://github.com/larsroettig/demo-component-targetables
