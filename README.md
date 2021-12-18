@@ -1,6 +1,13 @@
 # PWAStudio `.targetables.js` Plugins
 
+[![Coverage Status](https://coveralls.io/repos/github/larsroettig/component-targetables/badge.svg?branch=main)](https://coveralls.io/github/larsroettig/component-targetables?branch=main)
+
+
+
 Allows to use `.targetables.js` for PWAStudio
+
+
+
 
 
 ### Usage Exsample
