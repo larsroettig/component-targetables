@@ -1,5 +1,6 @@
 # PWAStudio `.targetables.js` Plugins
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/938640a9bab645348a24437daaca3778)](https://app.codacy.com/gh/larsroettig/component-targetables?utm_source=github.com&utm_medium=referral&utm_content=larsroettig/component-targetables&utm_campaign=Badge_Grade_Settings)
 [![Coverage Status](https://coveralls.io/repos/github/larsroettig/component-targetables/badge.svg?branch=main)](https://coveralls.io/github/larsroettig/component-targetables?branch=main)
 
 Allows to use `.targetables.js` for PWAStudio
