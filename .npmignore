@@ -5,6 +5,7 @@ docs
 tsconfig.json
 tslint.json
 .prettierrc
+.releaserc
 .nvmrc
 .idea
 .vscode
