@@ -5,8 +5,10 @@ docs
 tsconfig.json
 tslint.json
 .prettierrc
+.nvmrc
 .vscode
 .github
 .eslintrc.js
+wallaby.js
 jest.config.js
 prettier.config.js
