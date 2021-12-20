@@ -14,9 +14,7 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: yarn install
-      - name: 🏗 Run build script
-      - run: yarn build
-      
+      - run: yarn build   
       - name: 🚀 Release
         uses: cycjimmy/semantic-release-action@v2
         with:
