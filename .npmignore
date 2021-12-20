@@ -6,6 +6,7 @@ tsconfig.json
 tslint.json
 .prettierrc
 .nvmrc
+.idea
 .vscode
 .github
 .eslintrc.js

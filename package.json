@@ -1,7 +1,7 @@
 {
   "name": "@larsroettig/component-targetables",
   "description": "Simplify creating maintainable PWAStudio Projects",
-  "version": "3.0.0rc4",
+  "version": "0.0.0-semantically-released",
   "author": "Lars Roettig <l.roettig@techdivision.com>",
   "license": "MIT",
   "homepage": "https://github.com/larsroettig/component-targetables",
@@ -58,7 +58,7 @@
       "pre-commit": "yarn lint"
     }
   },
-  "files ": [
-    "dist/**/* "
+  "files": [
+    "dist/src"
   ]
 }
