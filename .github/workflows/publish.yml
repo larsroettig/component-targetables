@@ -14,7 +14,22 @@ jobs:
           node-version: 14
           registry-url: https://registry.npmjs.org/
       - run: yarn install
+      - name: 🏗 Run build script
       - run: yarn build
-      - run: npm publish --access public
+      
+      - name: 🚀 Release
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          semantic_version: 17
+          branches: |
+            [
+              '+([0-9])?(.{+([0-9]),x}).x',
+              'main',
+              'next',
+              'next-major',
+              {name: 'beta', prerelease: true},
+              {name: 'alpha', prerelease: true}
+            ]
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
