@@ -1,15 +1,15 @@
 {
   "name": "@larsroettig/component-targetables",
   "description": "Simplify creating maintainable PWAStudio Projects",
-  "version": "0.0.0-semantically-released",
+  "version": "v3.0.0-rc6",
   "author": "Lars Roettig <l.roettig@techdivision.com>",
   "license": "MIT",
   "homepage": "https://github.com/larsroettig/component-targetables",
   "bugs": {
     "url": "https://github.com/larsroettig/component-targetables/issues"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "scripts": {
     "prepublish": "tsc",
     "format": "prettier --fix",
@@ -61,8 +61,5 @@
   },
   "files": [
     "dist/src"
-  ],
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  }
+  ]
 }
