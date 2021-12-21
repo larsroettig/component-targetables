@@ -67,7 +67,11 @@ class ExtendLocalIntercept {
         `${currentPath}/${myPath}`,
       );
 
-      componentInterceptor.interceptComponent(component);
+      if (componentInterceptor && componentInterceptor.interceptComponent) {
+        componentInterceptor.interceptComponent(component);
+      } else {
+        this.log(LogLevel.warn, 'No interceptComponent export in', `${currentPath}/${myPath}`);
+      }
     });
   };
 
@@ -168,7 +172,7 @@ class ExtendLocalIntercept {
 
   private static async getPathsByFileExtension(
     fileExtension: string,
-    targetablesSearchPaths: string[] = ['components', 'RootComponents'],
+    targetablesSearchPaths: string[],
   ) {
     return globby(targetablesSearchPaths, {
       expandDirectories: {
