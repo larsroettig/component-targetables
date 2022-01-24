@@ -4,6 +4,7 @@ const { stat: fsStat } = require('fs/promises');
 const { requireTargetFile } = require('./requireTargetFile');
 
 enum LogLevel {
+  'none' = -1,
   'warn' = 0,
   'debug' = 2,
 }
@@ -21,17 +22,17 @@ class ExtendLocalIntercept {
 
   constructor(
     targetables: any,
-    options: ExtendInterceptOptions = { logLevel: LogLevel.warn },
+    options: ExtendInterceptOptions = { logLevel: LogLevel.none },
   ) {
     this.targetables = targetables;
     this.logLevel = options.logLevel;
   }
 
   /**
-     * @param fileExtension
-     * @param targetablesSearchPaths
-     * @param magentoPath
-     */
+   * @param fileExtension
+   * @param targetablesSearchPaths
+   * @param magentoPath
+   */
   public allowCustomTargetables = async (
     fileExtension = '*.targetables.js',
     targetablesSearchPaths = ['src/components', 'src/RootComponents'],
@@ -50,9 +51,10 @@ class ExtendLocalIntercept {
       fileExtension.length - 3,
     );
 
-    const callBack = (file: string) => file
-      .replace(pathReplacement, '')
-      .replace(replaceRegex, `${magentoPath}/venia-ui/lib/$<type>`);
+    const callBack = (file: string) =>
+      file
+        .replace(pathReplacement, '')
+        .replace(replaceRegex, `${magentoPath}/venia-ui/lib/$<type>`);
 
     const compListMap = await this.resolveCoreFiles(paths, callBack);
     compListMap.forEach((props) => {
@@ -61,25 +63,36 @@ class ExtendLocalIntercept {
         relativePath.replace('node_modules/', ''),
       );
 
-      this.log(LogLevel.debug, 'Intercept', `${currentPath}/${myPath}`);
+      this.log(
+        LogLevel.debug,
+        'Intercept',
+        `${currentPath}/${myPath}`,
+      );
 
       const componentInterceptor = requireTargetFile(
         `${currentPath}/${myPath}`,
       );
 
-      if (componentInterceptor && componentInterceptor.interceptComponent) {
+      if (
+        componentInterceptor &&
+        componentInterceptor.interceptComponent
+      ) {
         componentInterceptor.interceptComponent(component);
       } else {
-        this.log(LogLevel.warn, 'No interceptComponent export in', `${currentPath}/${myPath}`);
+        this.log(
+          LogLevel.warn,
+          'No interceptComponent export in',
+          `${currentPath}/${myPath}`,
+        );
       }
     });
   };
 
   /**
-     * @param fileExtension
-     * @param targetablesSearchPaths
-     * @param magentoPath
-     */
+   * @param fileExtension
+   * @param targetablesSearchPaths
+   * @param magentoPath
+   */
   public allowCssOverwrites = async (
     fileExtension = '*.module.css',
     targetablesSearchPaths = ['src/components', 'src/RootComponents'],
@@ -91,10 +104,11 @@ class ExtendLocalIntercept {
     );
 
     const replaceRegex = this.buildRegex(targetablesSearchPaths);
-    const callBack = (file: string) => file.replace(
-      replaceRegex,
-      `${magentoPath}/venia-ui/lib/$<type>`,
-    );
+    const callBack = (file: string) =>
+      file.replace(
+        replaceRegex,
+        `${magentoPath}/venia-ui/lib/$<type>`,
+      );
 
     const compListMap = await this.resolveCoreFiles(paths, callBack);
 
@@ -102,8 +116,8 @@ class ExtendLocalIntercept {
       const { relativePath, myPath } = props;
 
       /* This means we have matched a local file to something in venia-ui!
-            * Find the JS  component from our CSS file name
-            */
+       * Find the JS  component from our CSS file name
+       */
       const jsComponent = relativePath
         .replace('node_modules/', '')
         .replace(fileExtension.substring(1), '.js');
@@ -120,24 +134,36 @@ class ExtendLocalIntercept {
     });
   };
 
-  private resolveCoreFiles = async (paths : string[], callBack: (path: string) => string) => {
+  private resolveCoreFiles = async (
+    paths: string[],
+    callBack: (path: string) => string,
+  ) => {
     const currentPath = process.cwd();
 
-    const relativePathMap: { myPath: string; relativePath: string; }[] = [];
+    const relativePathMap: {
+      myPath: string;
+      relativePath: string;
+    }[] = [];
 
-    await Promise.all(paths.map(async (myPath: string) => {
-      const relativePath = callBack(myPath);
-      const absolutePath = path.resolve(currentPath, relativePath);
+    await Promise.all(
+      paths.map(async (myPath: string) => {
+        const relativePath = callBack(myPath);
+        const absolutePath = path.resolve(currentPath, relativePath);
 
-      try {
-        const stat = await fsStat(absolutePath);
-        if (stat && stat.isFile()) {
-          relativePathMap.push({ myPath, relativePath });
+        try {
+          const stat = await fsStat(absolutePath);
+          if (stat && stat.isFile()) {
+            relativePathMap.push({ myPath, relativePath });
+          }
+        } catch (error) {
+          this.log(
+            LogLevel.warn,
+            'File not exits in core',
+            absolutePath,
+          );
         }
-      } catch (error) {
-        this.log(LogLevel.warn, 'File not exits in core', absolutePath);
-      }
-    }));
+      }),
+    );
 
     return relativePathMap;
   };
@@ -163,9 +189,8 @@ class ExtendLocalIntercept {
       return this.componentsCache[modulePath];
     }
 
-    this.componentsCache[modulePath] = this.targetables.reactComponent(
-      modulePath,
-    );
+    this.componentsCache[modulePath] =
+      this.targetables.reactComponent(modulePath);
 
     return this.componentsCache[modulePath];
   };
